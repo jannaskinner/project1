@@ -1749,14 +1749,418 @@ Weather %&gt;% summarise(Avg = mean(MaxTemp), SD = sd(MaxTemp),
 ##  9          0.19      31      43
 ## 10          0.18      28      35
 ## # … with 52 more rows</code></pre>
-<pre class="r"><code># mtcars %&gt;% group_by(cyl) %&gt;% summarize_at(c(1, 2:3,5:6),
-# .funs=list(mean=mean,sd=sd)) %&gt;% pivot_longer(-1) %&gt;%
-# separate(name, into=c(&#39;name&#39;,&#39;stat&#39;)) %&gt;% pivot_wider() -&gt;
-# table1 mtcars Weather %&gt;% group_by(Location) %&gt;%
-# summarize_at(c(4:7), .funs=list(mean=mean,sd=sd)) %&gt;%
-# pivot_longer(-1) %&gt;% separate(name, into=c(&#39;name&#39;,&#39;stat&#39;))
-# %&gt;% pivot_wider() -&gt; table1 table1</code></pre>
-<p>First, a new variable was created by using the existing minimum and maximum temperatures. Next, any location name that had a hyphen was taken out. For example, Sea-Tac is now SeaTac. Then, summary statistics were calculated for the numeric variables of MaxTemp, MinTemp, and Precipitation. The mean, sd, minimum, maximum and distinct values were calculated. The same summary statistics were calculated for the Median Temp depending on the grouping by Location or Month. The number of observations per location was calculated. 305 in Lincoln and in 62 SeaTac. The number of observations per month was also calculated. Then the number of observations per month at each location was calculated.</p>
+<pre class="r"><code>library(knitr)
+library(gt)
+
+table1 &lt;- Weather %&gt;% summarize_at(c(4:7), .funs = list(mean = mean, 
+    sd = sd, min = min, max = max, unique = n_distinct)) %&gt;% 
+    pivot_longer(1:20, names_to = &quot;names&quot;, values_to = &quot;values&quot;) %&gt;% 
+    separate(names, into = c(&quot;name&quot;, &quot;stat&quot;)) %&gt;% pivot_wider(names_from = &quot;name&quot;, 
+    values_from = &quot;values&quot;)
+
+table1 %&gt;% gt %&gt;% tab_header(title = md(&quot;**Summary Statistics**&quot;), 
+    subtitle = md(&quot;A table of my `Weather` summary statistics&quot;)) %&gt;% 
+    tab_spanner(label = &quot;Variables&quot;, columns = c(&quot;stat&quot;, &quot;MaxTemp&quot;, 
+        &quot;MinTemp&quot;, &quot;Precipitation&quot;, &quot;MedianTemp&quot;))</code></pre>
+<p><style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#atfgyfcfgv .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#atfgyfcfgv .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#atfgyfcfgv .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#atfgyfcfgv .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#atfgyfcfgv .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#atfgyfcfgv .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#atfgyfcfgv .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#atfgyfcfgv .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#atfgyfcfgv .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#atfgyfcfgv .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#atfgyfcfgv .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#atfgyfcfgv .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#atfgyfcfgv .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#atfgyfcfgv .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#atfgyfcfgv .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#atfgyfcfgv .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#atfgyfcfgv .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#atfgyfcfgv .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#atfgyfcfgv .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#atfgyfcfgv .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#atfgyfcfgv .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#atfgyfcfgv .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#atfgyfcfgv .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#atfgyfcfgv .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#atfgyfcfgv .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#atfgyfcfgv .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#atfgyfcfgv .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#atfgyfcfgv .gt_left {
+  text-align: left;
+}
+
+#atfgyfcfgv .gt_center {
+  text-align: center;
+}
+
+#atfgyfcfgv .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#atfgyfcfgv .gt_font_normal {
+  font-weight: normal;
+}
+
+#atfgyfcfgv .gt_font_bold {
+  font-weight: bold;
+}
+
+#atfgyfcfgv .gt_font_italic {
+  font-style: italic;
+}
+
+#atfgyfcfgv .gt_super {
+  font-size: 65%;
+}
+
+#atfgyfcfgv .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="atfgyfcfgv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="5" class="gt_heading gt_title gt_font_normal" style><strong>Summary Statistics</strong></th>
+    </tr>
+    <tr>
+      <th colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>A table of my <code>Weather</code> summary statistics</th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="5">
+        <span class="gt_column_spanner">Variables</span>
+      </th>
+    </tr>
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">stat</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">MaxTemp</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">MinTemp</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Precipitation</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">MedianTemp</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">mean</td>
+      <td class="gt_row gt_right">62.97548</td>
+      <td class="gt_row gt_right">39.00817</td>
+      <td class="gt_row gt_right">0.1035150</td>
+      <td class="gt_row gt_right">50.99183</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">sd</td>
+      <td class="gt_row gt_right">18.79795</td>
+      <td class="gt_row gt_right">17.31080</td>
+      <td class="gt_row gt_right">0.3090456</td>
+      <td class="gt_row gt_right">17.12394</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">min</td>
+      <td class="gt_row gt_right">8.00000</td>
+      <td class="gt_row gt_right">-26.00000</td>
+      <td class="gt_row gt_right">0.0000000</td>
+      <td class="gt_row gt_right">-6.00000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">max</td>
+      <td class="gt_row gt_right">98.00000</td>
+      <td class="gt_row gt_right">72.00000</td>
+      <td class="gt_row gt_right">2.5900000</td>
+      <td class="gt_row gt_right">84.50000</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">unique</td>
+      <td class="gt_row gt_right">76.00000</td>
+      <td class="gt_row gt_right">75.00000</td>
+      <td class="gt_row gt_right">56.0000000</td>
+      <td class="gt_row gt_right">126.00000</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div> First, a new variable was created by using the existing minimum and maximum temperatures. Next, any location name that had a hyphen was taken out. For example, Sea-Tac is now SeaTac. Then, summary statistics were calculated for the numeric variables of MaxTemp, MinTemp, and Precipitation. The mean, sd, minimum, maximum and distinct values were calculated. The same summary statistics were calculated for the Median Temp depending on the grouping by Location or Month. The number of observations per location was calculated. 305 in Lincoln and in 62 SeaTac. The number of observations per month was also calculated. Then the number of observations per month at each location was calculated.</p>
 <p>Next, I compared the Median Temperature statistics for the winter in Month 1 and the summer at Month 6. The avg, min, and max and significant differences as predicted. Lastly, I compared the difference of precipitation in Lincoln and SeaTac. I was surprised to see that Lincoln had a higher maximum amount of precipitation. However, this observation could be due to the fact that Lincoln has more data entries than SeaTac.</p>
 </div>
 <div id="visualizing" class="section level4">

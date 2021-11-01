@@ -72,7 +72,7 @@ data2 <- read_csv("https://some.website/dataset2.csv")
     
     - Compute these statistics both overall and after grouping by one or more categorical variables (either together or one-at-a-time; if you have two categorical variables, include at least one statistic based on a grouping of two categorical variables simultaneously). If you do not have any categorical variables, create one using mutate (e.g., with `case_when` or `ifelse`) to satisfy the `group_by` requirements above. Compute at least one summary stat with a user-defined function rather than a built-in one. 
     
-    - *Report these summary statistics in an easy-to-read tables (e.g., by reshaping, if your original datasets were tidy). Style at least one table using the `gt` or `kable` packages. 
+    - Report these summary statistics in an easy-to-read tables (e.g., by reshaping, if your original datasets were tidy). Style at least one table using the `gt` or `kable` packages. 
  
 4. Make visualizations (three plots)
 
@@ -135,7 +135,7 @@ Prerequisite: Finding appropriate data from at least two sources per the instruc
 
 - Discuss the procedure and all (or the most interesting) findings/results in no more than two paragraphs (8 pts)
 
-- *Style at least one table with `gt` or `kable` packages (4 pts)
+- Style at least one table with `gt` or `kable` packages (4 pts)
 
 
 #### 4. Visualizing (39 pts)

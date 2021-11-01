@@ -114,10 +114,12 @@ Weather %>% filter(Location == "SeaTac") %>% select(Precipitation, MinTemp,MaxTe
 ```
 
 ```{R}
-#mtcars %>% group_by(cyl) %>% summarize_at(c(1, 2:3,5:6), .funs=list(mean=mean,sd=sd)) %>% pivot_longer(-1) %>% separate(name, into=c("name","stat")) %>% pivot_wider() -> table1
-#mtcars
-#Weather %>% group_by(Location) %>% summarize_at(c(4:7), .funs=list(mean=mean,sd=sd)) %>% pivot_longer(-1) %>% separate(name, into=c("name","stat")) %>% pivot_wider() -> table1
-#table1
+library(knitr)
+library(gt)
+
+Weather %>% summarize_at(c(4:7) , .funs=list(mean=mean,sd=sd, min=min, max=max, unique = n_distinct)) %>% pivot_longer(1:20,names_to="names", values_to="values") %>% separate(names, into=c("name","stat")) %>% pivot_wider(names_from = 'name', values_from = 'values') -> table1
+
+table1 %>% gt %>% tab_header(title=md("**Summary Statistics**"), subtitle=md("A table of my `Weather` summary statistics")) %>% tab_spanner(label="Variables", columns=c("stat","MaxTemp","MinTemp","Precipitation","MedianTemp"))
 ```
 First, a new variable was created by using the existing minimum and maximum temperatures. Next, any location name that had a hyphen was taken out. For example, Sea-Tac is now SeaTac. Then, summary statistics were calculated for the numeric variables of MaxTemp, MinTemp, and Precipitation. The mean, sd, minimum, maximum and distinct values were calculated. The same summary statistics were calculated for the Median Temp depending on the grouping by Location or Month. The number of observations per location was calculated. 305 in Lincoln and in 62 SeaTac. The number of observations per month was also calculated. Then the number of observations per month at each location was calculated.
 
